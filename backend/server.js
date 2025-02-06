@@ -9,7 +9,7 @@ dotenv.config({ path: './.env' });
 
 cloudinary.v2.config({
     cloud_name: 'dlqclovym',
-    api_key: '714723275263638',
+    api_key: '474289674742291',
     api_secret: 'sVr9gDaIRHzQgxVWHHcF1FbDbG0'
 })
 

@@ -9,7 +9,7 @@ app.use(cors());
 
 // IMPORT ROUTES
 const categoryRoutes = require('./routes/category');
-
+const productRoutes = require('./routes/product')
 
 
 require('dotenv').config();
@@ -17,6 +17,7 @@ require('dotenv').config();
 
 // USE ROUTES
 app.use('/category', categoryRoutes);
+app.use('/product', productRoutes)
 
 
 module.exports = app;
