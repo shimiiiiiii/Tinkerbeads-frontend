@@ -1,57 +1,96 @@
 import React from 'react';
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Icon from 'react-native-vector-icons/FontAwesome'; // Import Icon
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/Ionicons';
 
-import HomeNavigator from './HomeNavigator';
-import UserNavigator from './UserNavigator';
-import CartNavigator from './CartNavigator';
-import SearchNavigator from './SearchNavigator';
+
+import CartNavigator from "./CartNavigator";
+import HomeNavigator from "./HomeNavigator";
+import SaveNavigator from "./SaveNavigator";
+import UserNavigator from "./UserNavigator"
 
 const Tab = createBottomTabNavigator();
 
-const Main = () => {
-    return (
-        <Tab.Navigator>
-            <Tab.Screen
-                name="Home"
-                component={HomeNavigator}
-                options={{
-                    tabBarIcon: ({ color }) => (
-                        <Icon name="home" color={color} size={30} />
-                    ),
-                }}
+const MainNavigator = () => {
+  return (
+
+    <Tab.Navigator
+      initialRouteName="Home"
+      screenOptions={{
+        tabBarHideOnKeyboard: true,
+        tabBarShowLabel: false,
+        // tabBarActiveTintColor: '#e91e63'
+        tabBarStyle: { backgroundColor: '#584e51' }, 
+        tabBarActiveTintColor: 'black',
+        tabBarInactiveTintColor: 'white', 
+      }}
+
+
+    >
+      <Tab.Screen
+        name="Home"
+        component={HomeNavigator}
+        options={{
+          tabBarIcon: ({ color }) => {
+            return <Icon
+              name="home-sharp"
+              style={{ position: "relative" }}
+              color={color}
+              size={30}
+
             />
-            <Tab.Screen
-                name="Search"
-                component={SearchNavigator}
-                options={{
-                    tabBarIcon: ({ color }) => (
-                        <Icon name="search" color={color} size={30} />
-                    ),
-                }}
+          }
+        }}
+      />
+
+      <Tab.Screen
+        name="Save"
+        component={SaveNavigator}
+        options={{
+          tabBarIcon: ({ color }) => {
+            return <Icon
+              name="heart-sharp"
+              style={{ position: "relative" }}
+              color={color}
+              size={30}
+
             />
-            <Tab.Screen
-                name="Cart"
-                component={CartNavigator}
-                options={{
-                    tabBarIcon: ({ color }) => (
-                        <Icon name="shopping-cart" color={color} size={30} />
-                    ),
-                }}
+          }
+        }}
+      />
+
+      <Tab.Screen
+        name="Cart"
+        component={CartNavigator}
+        options={{
+          tabBarIcon: ({ color }) => {
+            return <Icon
+              name="cart-sharp"
+              style={{ position: "relative" }}
+              color={color}
+              size={30}
+
             />
-            <Tab.Screen
-                name="Profile"
-                component={UserNavigator}
-                options={{
-                    tabBarIcon: ({ color }) => (
-                        <Icon name="user" color={color} size={30} />
-                    ),
-                }}
+          }
+        }}
+      />
+
+      <Tab.Screen
+        name="User"
+        component={UserNavigator}
+        options={{
+          tabBarIcon: ({ color }) => {
+            return <Icon
+              name="person-sharp"
+              style={{ position: "relative" }}
+              color={color}
+              size={30}
+
             />
-        </Tab.Navigator>
-    );
+          }
+        }}
+      />
+    </Tab.Navigator>
+  );
 };
 
-export default Main; // ✅ Corrected export
-
-
+export default MainNavigator;

@@ -1,7 +1,17 @@
 import React from 'react'
+import { View, Text } from 'react-native';
 
-export default function UserNavigator() {
+
+const UserNavigator = () => {
   return (
-    <div>UserNavigator</div>
+    <>
+      <View>
+        <Text>Open up App.js to start working on your app!</Text>
+      </View>
+    </>
   )
+
 }
+
+
+export default UserNavigator;
