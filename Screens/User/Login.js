@@ -1,15 +1,42 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import baseURL from '../../assets/common/baseUrl';
 
 export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const navigation = useNavigation();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+  const handleLogin = async () => {
+    try {
+      const res = await axios.post(`${baseURL}/user/login`, {
+        email,
+        password
+      });
+  
+      if (res.data.success) {
+        Alert.alert('Success', res.data.message || 'Logged in successfully!', [
+          { text: 'OK', onPress: () => navigation.navigate('MainNavigator') }
+        ]);
+      } else {
+        console.log('Login failed:', res.data);
+        Alert.alert('Login Failed', res.data.message || 'Unknown error');
+      }
+    } catch (error) {
+      console.log('Login error:', error);
+      Alert.alert('Error', 'Something went wrong.');
+    }
+  };
+  
+
 
   return (
     <View style={styles.container}>
@@ -19,8 +46,11 @@ export default function LoginScreen() {
         <Icon name="user" size={20} color="#000" style={styles.icon} />
         <TextInput
           style={styles.input}
-          placeholder="USERNAME"
+          placeholder="EMAIL"
           placeholderTextColor="#000"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
         />
       </View>
 
@@ -31,6 +61,8 @@ export default function LoginScreen() {
           placeholder="PASSWORD"
           placeholderTextColor="#000"
           secureTextEntry={!showPassword}
+          value={password}
+          onChangeText={setPassword}
         />
         <TouchableOpacity
           onPress={togglePasswordVisibility}
@@ -48,7 +80,7 @@ export default function LoginScreen() {
         <Text style={styles.forgotPassword}>FORGOT PASSWORD?</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.loginButton}>
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginButtonText}>Login</Text>
       </TouchableOpacity>
 
