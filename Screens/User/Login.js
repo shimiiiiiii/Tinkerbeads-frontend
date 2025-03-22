@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useNavigation } from '@react-navigation/native';
 
 export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
+  const navigation = useNavigation();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -30,14 +32,14 @@ export default function LoginScreen() {
           placeholderTextColor="#000"
           secureTextEntry={!showPassword}
         />
-        <TouchableOpacity 
+        <TouchableOpacity
           onPress={togglePasswordVisibility}
           style={styles.eyeIcon}
         >
-          <Icon 
-            name={showPassword ? "eye" : "eye-slash"} 
-            size={20} 
-            color="#000" 
+          <Icon
+            name={showPassword ? "eye" : "eye-slash"}
+            size={20}
+            color="#000"
           />
         </TouchableOpacity>
       </View>
@@ -67,8 +69,11 @@ export default function LoginScreen() {
 
       <View style={styles.signUpContainer}>
         <Text style={styles.noAccountText}>Don't have an account? </Text>
-        <TouchableOpacity>
+        {/* <TouchableOpacity>
           <Text style={styles.signUpText}>Sign Up</Text>
+        </TouchableOpacity> */}
+        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+          <Text style={styles.signUpText}>SignUp</Text>
         </TouchableOpacity>
       </View>
     </View>

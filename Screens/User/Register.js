@@ -1,9 +1,19 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native';
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as ImagePicker from 'expo-image-picker';
+import { useNavigation } from '@react-navigation/native';
+import baseURL from '../../assets/common/baseUrl';
 
 export default function RegisterScreen() {
+    const navigation = useNavigation();
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    // const [password, setPassword] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
     const [image, setImage] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -44,6 +54,64 @@ export default function RegisterScreen() {
         }
     };
 
+    const handleRegister = async () => {
+        if (email === "" || firstName === "" || lastName === "" || password === "") {
+            Alert.alert("Error", "Please fill in the form correctly");
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            Alert.alert("Error", "Passwords do not match");
+            return;
+        }
+
+        const formData = new FormData();
+
+        formData.append('first_name', firstName);
+        formData.append('last_name', lastName);
+        formData.append('email', email);
+        // formData.append('password', showPassword);
+        formData.append('password', password);
+
+        if (image) {
+            const filename = image.split('/').pop();
+            const match = /\.(\w+)$/.exec(filename ?? '');
+            const type = match ? `image/${match[1]}` : `image`;
+
+            formData.append('images', {
+                uri: image,
+                name: filename,
+                type,
+            });
+        }
+
+        try {
+            const res = await fetch(`${baseURL}/user/register`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                // Alert.alert('Success', data.message || 'Registration successful!');
+                // Optionally navigate to login
+                Alert.alert('Success', data.message || 'Registration successful!', [
+                    { text: 'OK', onPress: () => navigation.navigate('Login') }
+                ]);
+            } else {
+                Alert.alert('Error', data.message || 'Something went wrong.');
+            }
+        } catch (error) {
+            console.error(error);
+            Alert.alert('Error', 'Network error or server not reachable.');
+        }
+    };
+
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Sign Up</Text>
@@ -68,11 +136,15 @@ export default function RegisterScreen() {
                     style={[styles.input, styles.nameInput]}
                     placeholder="First Name"
                     placeholderTextColor="#999"
+                    value={firstName}
+                    onChangeText={setFirstName}
                 />
                 <TextInput
                     style={[styles.input, styles.nameInput]}
                     placeholder="Last Name"
                     placeholderTextColor="#999"
+                    value={lastName}
+                    onChangeText={setLastName}
                 />
             </View>
 
@@ -81,14 +153,24 @@ export default function RegisterScreen() {
                 placeholder="Email"
                 placeholderTextColor="#999"
                 keyboardType="email-address"
+                value={email}
+                onChangeText={setEmail}
             />
 
             <View style={styles.inputContainer}>
                 <TextInput
+                    // style={styles.input}
+                    // placeholder="Password"
+                    // placeholderTextColor="#999"
+                    // secureTextEntry={!showPassword}
+                    // // secureTextEntry value={password} 
+                    // onChangeText={setShowPassword}
                     style={styles.input}
                     placeholder="Password"
                     placeholderTextColor="#999"
                     secureTextEntry={!showPassword}
+                    value={password}
+                    onChangeText={setPassword}
                 />
                 <TouchableOpacity
                     onPress={togglePasswordVisibility}
@@ -104,10 +186,16 @@ export default function RegisterScreen() {
 
             <View style={styles.inputContainer}>
                 <TextInput
+                    // style={styles.input}
+                    // placeholder="Confirm Password"
+                    // placeholderTextColor="#999"
+                    // secureTextEntry={!showConfirmPassword}
                     style={styles.input}
                     placeholder="Confirm Password"
                     placeholderTextColor="#999"
                     secureTextEntry={!showConfirmPassword}
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
                 />
                 <TouchableOpacity
                     onPress={toggleConfirmPasswordVisibility}
@@ -121,13 +209,17 @@ export default function RegisterScreen() {
                 </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.signUpButton}>
+            <TouchableOpacity onPress={handleRegister} style={styles.signUpButton}>
                 <Text style={styles.signUpButtonText}>Sign Up</Text>
             </TouchableOpacity>
 
             <View style={styles.signInContainer}>
                 <Text style={styles.noAccountText}>Already have an account? </Text>
-                <TouchableOpacity>
+                {/* <TouchableOpacity>
+                    <Text style={styles.signInText}>Sign In</Text>
+                </TouchableOpacity> */}
+
+                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                     <Text style={styles.signInText}>Sign In</Text>
                 </TouchableOpacity>
             </View>
