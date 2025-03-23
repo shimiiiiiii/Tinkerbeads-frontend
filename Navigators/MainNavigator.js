@@ -29,6 +29,7 @@ const MainNavigator = () => {
         name="Home"
         component={HomeNavigator}
         options={{
+          headerShown: false,
           tabBarIcon: ({ color }) => {
             return <Icon
               name="home-sharp"

@@ -3,6 +3,7 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'reac
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import Toast from 'react-native-toast-message';
 import baseURL from '../../assets/common/baseUrl';
 
 export default function LoginScreen() {
@@ -21,21 +22,39 @@ export default function LoginScreen() {
         email,
         password
       });
-  
+
       if (res.data.success) {
-        Alert.alert('Success', res.data.message || 'Logged in successfully!', [
-          { text: 'OK', onPress: () => navigation.navigate('MainNavigator') }
-        ]);
+        Toast.show({
+          type: 'success',
+          text1: 'Login Successful',
+          text2: res.data.message || 'Welcome back!',
+          position: 'bottom'
+        });
+        setTimeout(() => {
+          navigation.navigate('MainNavigator');
+        }, 1500);
+
       } else {
         console.log('Login failed:', res.data);
-        Alert.alert('Login Failed', res.data.message || 'Unknown error');
+        Toast.show({
+          type: 'error',
+          text1: 'Login Failed',
+          text2: res.data.message || 'Invalid credentials',
+          position: 'bottom'
+        });
+
       }
     } catch (error) {
       console.log('Login error:', error);
-      Alert.alert('Error', 'Something went wrong.');
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Something went wrong.',
+        position: 'bottom'
+      });
+
     }
   };
-  
 
 
   return (
@@ -101,9 +120,7 @@ export default function LoginScreen() {
 
       <View style={styles.signUpContainer}>
         <Text style={styles.noAccountText}>Don't have an account? </Text>
-        {/* <TouchableOpacity>
-          <Text style={styles.signUpText}>Sign Up</Text>
-        </TouchableOpacity> */}
+        
         <TouchableOpacity onPress={() => navigation.navigate('Register')}>
           <Text style={styles.signUpText}>SignUp</Text>
         </TouchableOpacity>
