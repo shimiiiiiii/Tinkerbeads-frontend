@@ -5,12 +5,15 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import baseURL from '../../assets/common/baseUrl';
+import { useAuth } from '../../Context/Auth'; 
+import { getToken } from '../../utils/sqliteToken';
 
 export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
+  const { login } = useAuth(); // use the auth context
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -24,6 +27,12 @@ export default function LoginScreen() {
       });
 
       if (res.data.success) {
+        // store the token and user data using context
+        await login(res.data.user.token, res.data.user);
+        
+        const storedToken = await getToken();
+        console.log('Stored Token:', storedToken)
+
         Toast.show({
           type: 'success',
           text1: 'Login Successful',
