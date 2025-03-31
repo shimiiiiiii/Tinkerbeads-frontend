@@ -23,7 +23,7 @@ const CategoryFilter = (props) => {
                             style={styles.categoryImage}
                         />
                     </View>
-                    <Text style={styles.categoryName}>Diving{'\n'}Watch</Text>
+                    <Text style={styles.categoryName}>Bracelet</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.categoryItem}>
@@ -33,7 +33,7 @@ const CategoryFilter = (props) => {
                             style={styles.categoryImage}
                         />
                     </View>
-                    <Text style={styles.categoryName}>Classic{'\n'}Watch</Text>
+                    <Text style={styles.categoryName}>Necklace</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.categoryItem}>
@@ -43,17 +43,7 @@ const CategoryFilter = (props) => {
                             style={styles.categoryImage}
                         />
                     </View>
-                    <Text style={styles.categoryName}>Pilot{'\n'}Watch</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.categoryItem}>
-                    <View style={styles.categoryImageContainer}>
-                        <Image
-                            source={{ uri: 'https://res.cloudinary.com/dlqclovym/image/upload/v1742724105/daytona1_hix75v.webp' }}
-                            style={styles.categoryImage}
-                        />
-                    </View>
-                    <Text style={styles.categoryName}>Smart{'\n'}Watch</Text>
+                    <Text style={styles.categoryName}>Keychain</Text>
                 </TouchableOpacity>
             </ScrollView>
         </View>

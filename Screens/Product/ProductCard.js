@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
+import ProductDetail from './ProductDetail';
 
 const { width } = Dimensions.get("window");
 
@@ -13,7 +14,7 @@ const ProductCard = ({ item }) => {
     return (
         <TouchableOpacity
             style={styles.card}
-            onPress={() => navigation.navigate("Product Detail", { item: item })}
+            onPress={() => navigation.navigate("ProductDetail", { item: item })}
         >
             <Image
                 style={styles.image}
@@ -34,7 +35,6 @@ const ProductCard = ({ item }) => {
                     </View>
                 </View>
                 <Text style={styles.title}>{item.name}</Text>
-                <Text style={styles.brand}>{item.brand}</Text>
             </View>
         </TouchableOpacity>
     );
@@ -42,7 +42,7 @@ const ProductCard = ({ item }) => {
 
 const styles = StyleSheet.create({
     card: {
-        width: (width - 40) / 2,  // Accounting for padding and margin
+        width: (width - 40) / 2,  
         marginBottom: 16,
         backgroundColor: 'white',
         borderRadius: 10,
@@ -103,10 +103,6 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '500',
         marginBottom: 2,
-    },
-    brand: {
-        fontSize: 12,
-        color: '#666',
     },
 });
 
