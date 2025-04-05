@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,95 +9,140 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-
-// Mock data for orders - replace with real API data
-const mockOrders = [
-  {
-    id: '1',
-    customerName: 'Jane Doe',
-    total: 59.99,
-    status: 'Pending',
-    date: '2025-03-28',
-    items: [
-      { name: 'Crystal Beaded Bracelet', quantity: 1 },
-      { name: 'Gemstone Necklace', quantity: 1 },
-    ],
-  },
-  {
-    id: '2',
-    customerName: 'John Smith',
-    total: 34.99,
-    status: 'Shipped',
-    date: '2025-03-27',
-    items: [{ name: 'Pearl Earrings', quantity: 2 }],
-  },
-  {
-    id: '3',
-    customerName: 'Alice Johnson',
-    total: 19.99,
-    status: 'Delivered',
-    date: '2025-03-25',
-    items: [{ name: 'Turquoise Anklet', quantity: 1 }],
-  },
-];
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAdminOrders, updateOrderStatus } from '../../Redux/Actions/cartAction';
+import { getToken } from '../../utils/sqliteToken';
 
 const OrderManagement = () => {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const { loading, orders, error } = useSelector((state) => state.cart.adminOrders);
+  const { loading: updating, error: updateError } = useSelector(
+    (state) => state.cart.updateOrderStatus
+  );
+  const [token, setToken] = useState(null);
+  const [localOrders, setLocalOrders] = useState([]); // Local state for orders
 
+  // Fetch token and orders
   useEffect(() => {
-    // Simulate fetching orders from an API
-    setTimeout(() => {
-      setOrders(mockOrders);
-      setLoading(false);
-    }, 1000);
-  }, []);
+    const fetchToken = async () => {
+      try {
+        const storedToken = await getToken();
+        setToken(storedToken?.token);
+        if (storedToken?.token) {
+          dispatch(fetchAdminOrders(storedToken.token));
+        } else {
+          Alert.alert('Error', 'Authentication token not found.');
+        }
+      } catch (error) {
+        console.error('Error retrieving token from SQLite:', error);
+        Alert.alert('Error', 'Failed to retrieve authentication token.');
+      }
+    };
 
-  const handleUpdateStatus = (orderId, newStatus) => {
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order.id === orderId ? { ...order, status: newStatus } : order
-      )
-    );
-    Alert.alert('Success', `Order status updated to ${newStatus}`);
+    fetchToken();
+  }, [dispatch]);
+
+ // Sync local orders with fetched orders and sort them
+useEffect(() => {
+  if (orders) {
+    // Sort orders by date in descending order
+    const sortedOrders = [...orders].sort((a, b) => {
+      // Parse dates to compare them
+      const dateA = new Date(a.createdAt || a.date);
+      const dateB = new Date(b.createdAt || b.date);
+      // Sort in descending order (newest first)
+      return dateB - dateA;
+    });
+    setLocalOrders(sortedOrders);
+  }
+}, [orders]);
+
+  // Show error alert only when there's an update error
+  useEffect(() => {
+    if (updateError) {
+      Alert.alert('Error', updateError);
+    }
+  }, [updateError]);
+
+  // Handle order status update
+  const handleUpdateStatus = async (orderId, newStatus) => {
+    if (!token) {
+      Alert.alert('Error', 'Authentication token not found.');
+      return;
+    }
+  
+    try {
+      await dispatch(updateOrderStatus(orderId, newStatus, token));
+      // Update local state to reflect the new status
+      setLocalOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order._id === orderId ? { ...order, status: newStatus } : order
+        )
+      );
+      Alert.alert('Success', `Order status updated to ${newStatus}.`);
+    } catch (error) {
+      console.error('Error updating order status:', error);
+      Alert.alert('Error', 'Failed to update order status.');
+    }
   };
-
+  
+  // Render each order item
   const renderOrderItem = ({ item }) => (
     <View style={styles.orderCard}>
       <View style={styles.orderHeader}>
-        <Text style={styles.orderId}>Order #{item.id}</Text>
+        <Text style={styles.orderId}>Order #{item.orderNumber}</Text>
         <Text style={styles.orderDate}>{item.date}</Text>
       </View>
-      <Text style={styles.customerName}>{item.customerName}</Text>
-      <Text style={styles.orderTotal}>Total: ${item.total.toFixed(2)}</Text>
+      <Text style={styles.customerName}>
+        {item.user?.firstName} {item.user?.email}
+      </Text>
+      <Text style={styles.orderTotal}>Total: ₱{item.total.toFixed(2)}</Text>
       <Text style={styles.orderStatus}>Status: {item.status}</Text>
-
+  
       <View style={styles.itemsContainer}>
-        {item.items.map((product, index) => (
+        {item.cartItems.map((product, index) => (
           <Text key={index} style={styles.itemText}>
-            {product.quantity}x {product.name}
+            {product.quantity}x {product.productId?.name}
           </Text>
         ))}
       </View>
-
+  
       <View style={styles.actionsContainer}>
         {item.status === 'Pending' && (
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => handleUpdateStatus(item.id, 'Shipped')}
-          >
-            <Icon name="send-outline" size={18} color="#fff" />
-            <Text style={styles.actionButtonText}>Mark as Shipped</Text>
-          </TouchableOpacity>
+          <>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() => handleUpdateStatus(item._id, 'Shipped')}
+            >
+              <Icon name="send-outline" size={18} color="#fff" />
+              <Text style={styles.actionButtonText}>Mark as Shipped</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => handleUpdateStatus(item._id, 'Cancelled')}
+            >
+              <Icon name="close-outline" size={18} color="#fff" />
+              <Text style={styles.actionButtonText}>Cancel Order</Text>
+            </TouchableOpacity>
+          </>
         )}
         {item.status === 'Shipped' && (
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => handleUpdateStatus(item.id, 'Delivered')}
-          >
-            <Icon name="checkmark-done-outline" size={18} color="#fff" />
-            <Text style={styles.actionButtonText}>Mark as Delivered</Text>
-          </TouchableOpacity>
+          <>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() => handleUpdateStatus(item._id, 'Delivered')}
+            >
+              <Icon name="checkmark-done-outline" size={18} color="#fff" />
+              <Text style={styles.actionButtonText}>Mark as Delivered</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => handleUpdateStatus(item._id, 'Cancelled')}
+            >
+              <Icon name="close-outline" size={18} color="#fff" />
+              <Text style={styles.actionButtonText}>Cancel Order</Text>
+            </TouchableOpacity>
+          </>
         )}
       </View>
     </View>
@@ -111,12 +156,26 @@ const OrderManagement = () => {
     );
   }
 
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>Error: {error}</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
+      {updating && (
+        <View style={styles.updatingContainer}>
+          <ActivityIndicator size="small" color="#584e51" />
+          <Text>Updating order status...</Text>
+        </View>
+      )}
       <FlatList
-        data={orders}
+        data={localOrders}
         renderItem={renderOrderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item._id}
         contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false}
       />
@@ -194,6 +253,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginLeft: 10,
   },
+  cancelButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#d9534f', // Red color for cancel button
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 5,
+    marginLeft: 10,
+  },
   actionButtonText: {
     color: '#fff',
     fontSize: 14,
@@ -203,6 +271,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  updatingContainer: {
+    padding: 10,
+    alignItems: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 16,
   },
 });
 

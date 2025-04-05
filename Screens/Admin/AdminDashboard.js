@@ -6,7 +6,8 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  RefreshControl
+  RefreshControl,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -134,13 +135,15 @@ const AdminDashboard = ({ navigation }) => {
         
         <TouchableOpacity 
           style={styles.menuCard}
-          onPress={() => navigation.navigate('UserManagement')}
+          // onPress={() => navigation.navigate('UserManagement')}
+          onPress={() => alert('User feature coming soon!')}
         >
           <View style={[styles.iconContainer, { backgroundColor: '#584e51' }]}>
             <Icon name="people-outline" size={28} color="#fff" />
           </View>
           <Text style={styles.menuCardTitle}>Users</Text>
           <Text style={styles.menuCardText}>Manage users</Text>
+          
         </TouchableOpacity>
         
         <TouchableOpacity 
@@ -184,7 +187,7 @@ const AdminDashboard = ({ navigation }) => {
             <Icon name="cash" size={20} color="#584e51" />
             <Text style={styles.statTitle}>Revenue</Text>
           </View>
-          <Text style={styles.statNumber}>${dashboardData.totalRevenue.toFixed(2)}</Text>
+          <Text style={styles.statNumber}>₱{dashboardData.totalRevenue.toFixed(2)}</Text>
           <Text style={styles.statInfo}>
             Total earnings
           </Text>

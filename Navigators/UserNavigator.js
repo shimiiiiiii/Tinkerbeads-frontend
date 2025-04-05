@@ -2,6 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import UserProfile from '../Screens/User/UserProfile';
 import OrderHistory from '../Screens/User/OrderHistory';
+import OrderDetails from '../Screens/User/OrderDetails';
 import EditProfile from '../Screens/User/EditProfile';
 import Settings from '../Screens/User/Settings';
 
@@ -13,7 +14,7 @@ const UserNavigator = () => {
       initialRouteName="UserProfile"
       screenOptions={{
         headerStyle: {
-          backgroundColor: '#584e51',
+          backgroundColor: 'black',
         },
         headerTintColor: '#fff',
         headerTitleStyle: {
@@ -30,6 +31,11 @@ const UserNavigator = () => {
         name="OrderHistory" 
         component={OrderHistory} 
         options={{ title: "My Orders" }} 
+      />
+       <Stack.Screen 
+        name="OrderDetails" 
+        component={OrderDetails} 
+        options={{ title: "Order Details" }}
       />
       <Stack.Screen 
         name="EditProfile" 

@@ -44,7 +44,7 @@ const OrderConfirmation = ({ route, navigation }) => {
           
           <View style={styles.orderItem}>
             <Text style={styles.orderLabel}>Total Amount:</Text>
-            <Text style={styles.orderValue}>${total}</Text>
+            <Text style={styles.orderValue}>₱{total}</Text>
           </View>
           
           <View style={styles.orderItem}>

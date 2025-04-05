@@ -1187,6 +1187,7 @@
 
 // export default Cart;
 
+//FINAL WORKING CART WITH ASYNC
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -1330,26 +1331,43 @@ const Cart = () => {
       setSelectedItems(allSelected);
     }
   };
-
   const handleCheckout = () => {
     if (!hasSelectedItems) {
       Alert.alert('Selection Required', 'Please select at least one item to checkout');
       return;
     }
-
+  
     setLoading(true);
+  
     // Get only the selected items
     const selectedCartItems = userCartItems.filter((item) => selectedItems[item.id]);
-
+  
+    // Recalculate subtotal, shipping, and total for selected items
+    const selectedSubtotal = selectedCartItems
+      .reduce((sum, item) => sum + item.price * item.quantity, 0)
+      .toFixed(2);
+    const selectedShipping = selectedCartItems.length > 0 ? 150 : 0;
+    const selectedTotal = (parseFloat(selectedSubtotal) + selectedShipping).toFixed(2);
+  
     // Simulate API call
     setTimeout(() => {
       setLoading(false);
+  
+      // Navigate to the Checkout screen
       navigation.navigate('Checkout', {
         cartItems: selectedCartItems,
-        subtotal,
-        shipping,
-        total,
+        subtotal: selectedSubtotal,
+        shipping: selectedShipping,
+        total: selectedTotal,
       });
+  
+      // Remove only the selected items from the cart
+      selectedCartItems.forEach((item) => {
+        dispatch(removeFromCart(item.id));
+      });
+  
+      // Clear the selected items state
+      setSelectedItems({});
     }, 1000);
   };
 
@@ -1495,7 +1513,7 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 15,
-    backgroundColor: '#584e51',
+    backgroundColor: 'black',
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
@@ -1647,7 +1665,7 @@ const styles = StyleSheet.create({
     color: '#584e51',
   },
   checkoutButton: {
-    backgroundColor: '#584e51',
+    backgroundColor: 'black',
     paddingVertical: 12,
     borderRadius: 8,
     marginTop: 10,

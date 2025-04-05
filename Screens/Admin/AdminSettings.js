@@ -6,7 +6,7 @@ import {
   ScrollView,
   Switch,
   TouchableOpacity,
-  Alert
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-toast-message';

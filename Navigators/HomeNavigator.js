@@ -37,13 +37,12 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import ProductContainer from '../Screens/Product/ProductContainer';
-import ProductDetail from '../Screens/Product/ProductDetail';
-import CategoriesScreen from '../Screens/CategoriesScreen'; 
+import ProductDetail from '../Screens/Product/ProductDetail'; 
 import Settings from '../Screens/User/Settings';
 import UserProfile from '../Screens/User/UserProfile';
 import EditProfile from '../Screens/User/EditProfile';
-import OrdersScreen from '../Screens/User/OrderHistory';
-import FilterScreen from '../Screens/FilterScreen'; 
+import OrderHistory from '../Screens/User/OrderHistory';
+
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -93,7 +92,7 @@ export default function HomeNavigator() {
           drawerInactiveTintColor: '#6d6366', 
           drawerActiveBackgroundColor: 'rgba(88, 78, 81, 0.15)', 
           headerStyle: {
-            backgroundColor: '#584e51',
+            backgroundColor: 'black',
             elevation: 5,
             shadowOpacity: 0.3,
           },
@@ -135,25 +134,15 @@ export default function HomeNavigator() {
             ),
         }}
         />
-         <Drawer.Screen
+         {/* <Drawer.Screen
         name="Orders"
-        component={OrdersScreen}
+        component={OrderHistory}
         options={{
             drawerIcon: ({ color }) => (
             <Icon name="receipt-outline" size={22} color={color} style={{ marginRight: 10 }} />
             ),
         }}
-        />
-            <Drawer.Screen
-        name="Filter"
-        component={FilterScreen}
-        options={{
-            drawerLabel: "Search Filter",
-            drawerIcon: ({ color }) => (
-            <Icon name="filter-outline" size={22} color={color} style={{ marginRight: 10 }} />
-            ),
-        }}
-        />
+        /> */}
         <Drawer.Screen
         name="Settings"
         component={Settings}

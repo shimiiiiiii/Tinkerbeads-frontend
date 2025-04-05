@@ -158,8 +158,8 @@ const MainNavigator = () => {
       screenOptions={{
         tabBarHideOnKeyboard: true,
         tabBarShowLabel: false,
-        tabBarStyle: { backgroundColor: '#584e51' },
-        tabBarActiveTintColor: 'black',
+        tabBarStyle: { backgroundColor: 'black' },
+        tabBarActiveTintColor: '#584e51',
         tabBarInactiveTintColor: 'white',
       }}
     >
@@ -173,7 +173,7 @@ const MainNavigator = () => {
           ),
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Save"
         component={SaveNavigator}
         options={{
@@ -181,7 +181,7 @@ const MainNavigator = () => {
             <Icon name="heart-sharp" style={{ position: 'relative' }} color={color} size={30} />
           ),
         }}
-      />
+      /> */}
       <Tab.Screen
         name="Shopping Cart"
         component={CartNavigator}

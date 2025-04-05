@@ -425,12 +425,15 @@ const FilterScreen = ({ navigation, onApplyFilters }) => {
   };
 
   const applyFilters = () => {
-    onApplyFilters({
-      priceRange,
-      selectedCategories,
-    });
-
-    navigation.goBack();
+    const filters = {
+      minPrice: priceRange[0],
+      maxPrice: priceRange[1],
+      categories: selectedCategories,
+    };
+    if (onApplyFilters) {
+      onApplyFilters(filters); // Pass filters to the parent
+    }
+    navigation.goBack(); // Navigate back to the previous screen
   };
 
   const resetFilters = () => {
