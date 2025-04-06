@@ -31,7 +31,6 @@ const initialState = {
 
 export default function reviewReducer(state = initialState, action) {
     switch (action.type) {
-        // Create review
         case REVIEW_CREATE_REQUEST:
             return { 
                 ...state, 
@@ -51,7 +50,6 @@ export default function reviewReducer(state = initialState, action) {
                 error: action.payload 
             };
             
-        // Update review
         case REVIEW_UPDATE_REQUEST:
             return { 
                 ...state, 
@@ -71,7 +69,6 @@ export default function reviewReducer(state = initialState, action) {
                 error: action.payload 
             };
             
-        // List reviews by product
         case REVIEW_LIST_BY_PRODUCT_REQUEST:
             return { 
                 ...state, 
@@ -90,7 +87,6 @@ export default function reviewReducer(state = initialState, action) {
                 error: action.payload 
             };
             
-        // Check if user has already reviewed product
         case CHECK_USER_REVIEW_REQUEST:
             return { 
                 ...state, 
@@ -109,7 +105,6 @@ export default function reviewReducer(state = initialState, action) {
                 error: action.payload 
             };
             
-        // Check if user can review product
         case CHECK_CAN_REVIEW_REQUEST:
             return { 
                 ...state, 
@@ -137,9 +132,7 @@ export default function reviewReducer(state = initialState, action) {
                 ...state, 
                 loading: false, 
                 success: true,
-                // Remove the deleted review from the reviews array
                 reviews: state.reviews.filter(review => review._id !== action.payload),
-                // Clear userReview if it was the one deleted
                 userReview: state.userReview && state.userReview._id === action.payload ? null : state.userReview
             };
         case REVIEW_DELETE_FAIL:

@@ -353,7 +353,7 @@ const OrderHistory = () => {
     return (
       <TouchableOpacity style={styles.orderItem}>
         <View style={styles.orderHeader}>
-          {/* <Text style={styles.orderDate}>{new Date(item.createdAt).toLocaleDateString()}</Text> */}
+          <Text style={styles.orderDate}>{new Date(item.createdAt).toLocaleDateString()}</Text>
           <Text
             style={[
               styles.orderStatus,

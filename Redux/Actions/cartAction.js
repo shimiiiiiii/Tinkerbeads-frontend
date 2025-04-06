@@ -64,7 +64,7 @@ export const setCartItems = (items) => {
 
 export const placeOrder = (orderData, token) => async (dispatch) => {
     try {
-      console.log('Token in placeOrder:', token); // Debug the token
+      console.log('Token in placeOrder:', token); 
   
       const response = await axios.post(`${baseURL}/order/create-order`, orderData, {
         headers: {
@@ -80,7 +80,7 @@ export const placeOrder = (orderData, token) => async (dispatch) => {
   
       return Promise.resolve(response.data);
     } catch (error) {
-      console.error('Error in placeOrder:', error.response?.data || error.message); // Log the error
+      console.error('Error in placeOrder:', error.response?.data || error.message); 
       dispatch({
         type: 'PLACE_ORDER_FAIL',
         payload: error.response?.data?.message || error.message,
@@ -113,7 +113,6 @@ export const placeOrder = (orderData, token) => async (dispatch) => {
     }
 };
 
-// Fetch all orders (admin only)
 export const fetchAdminOrders = (token) => async (dispatch) => {
     try {
         dispatch({ type: FETCH_ADMIN_ORDERS_REQUEST });
@@ -143,10 +142,10 @@ export const updateOrderStatus = (orderId, newStatus, token) => async (dispatch)
 
       const response = await axios.put(
           `${baseURL}/order/admin-orders-update`,
-          { orderId, status: newStatus }, // Payload for the request
+          { orderId, status: newStatus }, 
           {
               headers: {
-                  Authorization: `Bearer ${token}`, // Pass the token for authentication
+                  Authorization: `Bearer ${token}`, 
                   'Content-Type': 'application/json',
               },
           }
@@ -154,7 +153,7 @@ export const updateOrderStatus = (orderId, newStatus, token) => async (dispatch)
 
       dispatch({
           type: UPDATE_ORDER_STATUS_SUCCESS,
-          payload: response.data, // Response from the server
+          payload: response.data, 
       });
 
       console.log('Success:', `Order status updated to ${newStatus}`);

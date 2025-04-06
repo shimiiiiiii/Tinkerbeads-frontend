@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { deleteToken } from '../../utils/sqliteToken'; 
 // import AuthGlobal from '../../Context/store/AuthGlobal';
 
 const Settings = ({ navigation }) => {
@@ -21,31 +22,34 @@ const Settings = ({ navigation }) => {
   const toggleNotifications = () => setNotifications(previousState => !previousState);
   const toggleDarkMode = () => setDarkMode(previousState => !previousState);
 
-  const logOut = async () => {
-    Alert.alert(
-      "Log Out",
-      "Are you sure you want to log out?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel"
-        },
-        {
-          text: "Log Out",
-          onPress: async () => {
-            try {
-              // Clear storage
-              await AsyncStorage.removeItem("jwt");
-              // context.dispatch({ type: "LOGOUT" });
-              navigation.navigate("Login");
-            } catch (error) {
-              console.log(error);
-            }
-          }
-        }
-      ]
-    );
-  };
+    const handleLogout = async () => {
+      Alert.alert(
+        'Logout', 
+        'Do you want to logout?', 
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel', // Dismiss the alert without doing anything
+          },
+          {
+            text: 'Logout',
+            onPress: async () => {
+              try {
+                await deleteToken(); // Delete the token from the SQLite database
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'Login' }], // Reset the navigation stack and navigate to the Login screen
+                });
+              } catch (error) {
+                console.error('Logout failed:', error);
+                Alert.alert('Error', 'Failed to log out. Please try again.');
+              }
+            },
+          },
+        ],
+        { cancelable: true } // Allow the user to dismiss the alert by tapping outside
+      );
+    };
 
   return (
     <ScrollView style={styles.container}>
@@ -107,7 +111,7 @@ const Settings = ({ navigation }) => {
       
       <TouchableOpacity 
         style={[styles.option, styles.logoutButton]}
-        onPress={logOut}
+        onPress={handleLogout}
       >
         <Text style={styles.logoutText}>Log Out</Text>
       </TouchableOpacity>

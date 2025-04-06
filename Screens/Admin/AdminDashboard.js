@@ -91,13 +91,12 @@ const AdminDashboard = ({ navigation }) => {
     );
   }
 
-  // Get status color
   const getStatusColor = (status) => {
     switch(status) {
-      case 'Processing': return '#f0ad4e'; // Warning/orange
-      case 'Shipped': return '#5bc0de'; // Info/blue
-      case 'Delivered': return '#5cb85c'; // Success/green
-      case 'Cancelled': return '#d9534f'; // Danger/red
+      case 'Processing': return '#f0ad4e'; 
+      case 'Shipped': return '#5bc0de'; 
+      case 'Delivered': return '#5cb85c'; 
+      case 'Cancelled': return '#d9534f'; 
       default: return '#777';
     }
   };
@@ -247,7 +246,8 @@ const AdminDashboard = ({ navigation }) => {
 
           <TouchableOpacity 
             style={styles.actionButton}
-            onPress={() => alert('Feature under development')}
+            // onPress={() => alert('Feature under development')}
+            onPress={() => navigation.navigate('Promotion')}
           >
             <Icon name="pricetag-outline" size={24} color="#584e51" />
             <Text style={styles.actionText}>Add Promotion</Text>

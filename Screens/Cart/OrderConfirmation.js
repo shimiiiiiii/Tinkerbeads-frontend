@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: '#3cb371', // Success green
+    backgroundColor: '#3cb371', 
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
@@ -157,12 +157,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   primaryButton: {
-    backgroundColor: '#584e51',
+    backgroundColor: 'black',
   },
   secondaryButton: {
     backgroundColor: 'transparent',
     borderWidth: 1,
-    borderColor: '#584e51',
+    borderColor: 'black',
   },
   primaryButtonText: {
     color: '#fff',

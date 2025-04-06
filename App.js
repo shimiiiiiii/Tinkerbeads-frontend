@@ -71,6 +71,8 @@
 //   },
 // });
 
+
+//WORKING CODE
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -97,7 +99,7 @@ export default function App() {
     <Provider store={store}>
       <AuthProvider>
         <NavigationContainer>
-          <Stack.Navigator initialRouteName="MainNavigator" screenOptions={{ headerShown: false }}>
+          <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Register" component={Register} />
             <Stack.Screen name="MainNavigator" component={MainNavigator} options={{ headerShown: false }} />

@@ -365,6 +365,14 @@ const OrderDetails = ({ route }) => {
   const [token, setToken] = useState(null); // State to store the token
   const dispatch = useDispatch();
 
+  if (!order || !order.orderNumber) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>Order details are missing or invalid.</Text>
+      </View>
+    );
+  }
+
   const isDelivered = order.status.toLowerCase() === 'delivered';
 
   // Fetch token from SQLite
@@ -462,13 +470,16 @@ const OrderDetails = ({ route }) => {
           <View style={styles.orderInfoCard}>
             <Text style={styles.orderInfo}>Order Number: {order.orderNumber}</Text>
             <Text style={[
-              styles.orderStatus, 
-              { color: order.status === 'Delivered' ? '#2e7d32' : 
-                      order.status === 'Processing' ? '#ff9800' : '#0277bd' }
-            ]}>
+            styles.orderStatus, 
+            { color: order.status === 'Delivered' ? '#2e7d32' : 
+              order.status === 'Processing' ? '#ff9800' :
+              order.status === 'Cancelled' ? '#d32f2f' :
+              order.status === 'Shipped' ? '#0277bd' :
+              order.status === 'Pending' ? '#ff9800' : '#0277bd' }
+        ]}>
               Status: {order.status}
             </Text>
-            <Text style={styles.orderInfo}>Date: {order.date || 'N/A'}</Text>
+            {/* <Text style={styles.orderInfo}>Date: {order.date || 'N/A'}</Text> */}
             <Text style={styles.orderTotal}>Total: ₱{order.total.toFixed(2)}</Text>
           </View>
 

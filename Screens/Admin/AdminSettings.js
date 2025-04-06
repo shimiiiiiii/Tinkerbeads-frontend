@@ -10,45 +10,43 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-toast-message';
+import { deleteToken } from '../../utils/sqliteToken'; 
 
 const AdminSettings = ({ navigation }) => {
-  // State for various settings
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
   const [autoBackup, setAutoBackup] = useState(true);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
 
-  // Handle logout
-  const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel'
-        },
-        {
-          text: 'Logout',
-          onPress: () => {
-            Toast.show({
-              type: 'success',
-              text1: 'Logged Out',
-              text2: 'You have been successfully logged out',
-              position: 'bottom'
-            });
-            // Navigate to login screen
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'Login' }]
-            });
-          }
-        }
-      ]
-    );
-  };
-
-  // Toggle maintenance mode with confirmation
+   const handleLogout = async () => {
+        Alert.alert(
+          'Logout', 
+          'Do you want to logout?', 
+          [
+            {
+              text: 'Cancel',
+              style: 'cancel', 
+            },
+            {
+              text: 'Logout',
+              onPress: async () => {
+                try {
+                  await deleteToken(); 
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Login' }], 
+                  });
+                } catch (error) {
+                  console.error('Logout failed:', error);
+                  Alert.alert('Error', 'Failed to log out. Please try again.');
+                }
+              },
+            },
+          ],
+          { cancelable: true } 
+        );
+      };
+  
   const toggleMaintenanceMode = () => {
     if (!maintenanceMode) {
       Alert.alert(
@@ -84,7 +82,6 @@ const AdminSettings = ({ navigation }) => {
     }
   };
 
-  // Handle backup
   const handleBackup = () => {
     Toast.show({
       type: 'success',
@@ -92,7 +89,7 @@ const AdminSettings = ({ navigation }) => {
       text2: 'System backup initiated. You will be notified when complete.',
       position: 'bottom'
     });
-    // Simulate backup process
+    
     setTimeout(() => {
       Toast.show({
         type: 'success',

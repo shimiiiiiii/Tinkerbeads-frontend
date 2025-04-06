@@ -367,6 +367,7 @@ import axios from 'axios';
 import baseURL from '../../assets/common/baseUrl';
 import { useAuth } from '../../Context/Auth';
 import { useFocusEffect } from '@react-navigation/native';
+import { deleteToken } from '../../utils/sqliteToken'; 
 
 const { width } = Dimensions.get('window');
 
@@ -389,8 +390,13 @@ const UserProfile = ({ navigation }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-
+  
       const userData = response.data.user;
+      if (!userData) {
+        Alert.alert('Error', 'User is not logged in.');
+        return;
+      }
+  
       setUser({
         name: `${userData.first_name} ${userData.last_name}`,
         email: userData.email,
@@ -400,8 +406,8 @@ const UserProfile = ({ navigation }) => {
         savedItems: userData.savedItems || 0,
       });
     } catch (error) {
-      console.error('Error fetching user profile:', error);
-      Alert.alert('Error', 'Failed to fetch user profile.');
+      // console.error('Error fetching user profile:', error);
+      Alert.alert('Notice!', 'Set up your profile first!');
     } finally {
       setLoading(false);
     }
@@ -413,8 +419,33 @@ const UserProfile = ({ navigation }) => {
     }, [])
   );
 
-  const handleLogout = () => {
-    Alert.alert('Logout', 'You have been logged out.');
+  const handleLogout = async () => {
+    Alert.alert(
+      'Logout', 
+      'Do you want to logout?', 
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel', // Dismiss the alert without doing anything
+        },
+        {
+          text: 'Logout',
+          onPress: async () => {
+            try {
+              await deleteToken(); // Delete the token from the SQLite database
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Login' }], // Reset the navigation stack and navigate to the Login screen
+              });
+            } catch (error) {
+              console.error('Logout failed:', error);
+              Alert.alert('Error', 'Failed to log out. Please try again.');
+            }
+          },
+        },
+      ],
+      { cancelable: true } // Allow the user to dismiss the alert by tapping outside
+    );
   };
 
   if (loading || !user) {

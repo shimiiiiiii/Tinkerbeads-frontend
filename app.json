@@ -23,6 +23,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "080e7e76-fcba-419a-846e-6c057e22baab"
+      }
+    },
+    "owner": "tinkerbeads"
   }
 }

@@ -1,8 +1,7 @@
-// Redux/Actions/reviewActions.js
+
 import axios from 'axios';
 import baseURL from '../../assets/common/baseUrl';
 
-// Review action types
 export const REVIEW_CREATE_REQUEST = 'REVIEW_CREATE_REQUEST';
 export const REVIEW_CREATE_SUCCESS = 'REVIEW_CREATE_SUCCESS';
 export const REVIEW_CREATE_FAIL = 'REVIEW_CREATE_FAIL';
@@ -27,7 +26,6 @@ export const REVIEW_DELETE_REQUEST = 'REVIEW_DELETE_REQUEST';
 export const REVIEW_DELETE_SUCCESS = 'REVIEW_DELETE_SUCCESS';
 export const REVIEW_DELETE_FAIL = 'REVIEW_DELETE_FAIL';
 
-// Create a review
 export const createReview = (productId, reviewData, token) => async (dispatch) => {
     try {
         dispatch({ type: REVIEW_CREATE_REQUEST });
@@ -50,10 +48,8 @@ export const createReview = (productId, reviewData, token) => async (dispatch) =
             payload: data.review
         });
 
-        // Refresh user's review status
         await dispatch(checkUserReview(productId, token));
 
-        // Refresh the reviews list for the product
         dispatch(listReviewsByProduct(productId));
 
     } catch (error) {
@@ -64,7 +60,6 @@ export const createReview = (productId, reviewData, token) => async (dispatch) =
     }
 };
 
-// Update a review
 export const updateReview = (productId, reviewId, reviewData, token) => async (dispatch) => {
     try {
         dispatch({ type: REVIEW_UPDATE_REQUEST });
@@ -87,7 +82,6 @@ export const updateReview = (productId, reviewId, reviewData, token) => async (d
             payload: data.review
         });
 
-        // Refresh the reviews list for the product
         dispatch(listReviewsByProduct(productId));
 
     } catch (error) {
@@ -98,7 +92,6 @@ export const updateReview = (productId, reviewId, reviewData, token) => async (d
     }
 };
 
-// Get all reviews for a product
 export const listReviewsByProduct = (productId) => async (dispatch) => {
     try {
         dispatch({ type: REVIEW_LIST_BY_PRODUCT_REQUEST });
@@ -119,7 +112,6 @@ export const listReviewsByProduct = (productId) => async (dispatch) => {
     }
 };
 
-// Check if user has already reviewed a product
 export const checkUserReview = (productId, token) => async (dispatch) => {
     try {
         dispatch({ type: CHECK_USER_REVIEW_REQUEST });
@@ -150,7 +142,6 @@ export const checkUserReview = (productId, token) => async (dispatch) => {
     }
 };
 
-// Check if user can review a product (has purchased it and order is delivered)
 export const checkCanReview = (productId, token) => async (dispatch) => {
     try {
         dispatch({ type: CHECK_CAN_REVIEW_REQUEST });
@@ -201,7 +192,6 @@ export const deleteReview = (productId, reviewId, token) => async (dispatch) => 
             payload: reviewId
         });
 
-        // Refresh the reviews list for the product
         dispatch(listReviewsByProduct(productId));
 
     } catch (error) {

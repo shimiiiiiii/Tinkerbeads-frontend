@@ -3,7 +3,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-// Admin screens
 import AdminDashboard from '../Screens/Admin/AdminDashboard';
 import ProductManagement from '../Screens/Admin/ProductManagement';
 import ProductForm from '../Screens/Admin/ProductForm';
@@ -11,6 +10,8 @@ import OrderManagement from '../Screens/Admin/OrderManagement';
 import AdminSettings from '../Screens/Admin/AdminSettings';
 // import OrderDetails from '../Screens/Admin/OrderDetails';
 // import UserManagement from '../Screens/Admin/UserManagement';
+import Promotion from '../Screens/Admin/Promotion';
+import OrderHistory from '../Screens/User/OrderHistory';
 
 const Stack = createStackNavigator();
 
@@ -76,6 +77,16 @@ const AdminNavigator = () => {
         component={UserManagement} 
         options={{ title: "Users" }} 
       /> */}
+      <Stack.Screen 
+        name="Promotion" 
+        component={Promotion} 
+        options={{ title: "Promotions" }}
+      />
+      <Stack.Screen 
+        name="OrderHistory" 
+        component={OrderHistory} 
+        options={{ title: "Order History" }}
+      />
     </Stack.Navigator>
   );
 };
