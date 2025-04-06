@@ -1,35 +1,3 @@
-// import React from 'react';
-// import { createStackNavigator } from "@react-navigation/stack";
-
-// import ProductContainer from "../Screens/Product/ProductContainer";
-// import ProductDetail from "../Screens/Product/ProductDetail"; 
-
-// const Stack = createStackNavigator();
-
-// function MyStack() {
-//     return (
-//         <Stack.Navigator>
-//             <Stack.Screen
-//                 name='ProductContainer'
-//                 component={ProductContainer}
-//                 options={{
-//                     headerShown: false,
-//                 }}
-//             />
-//             <Stack.Screen
-//                 name='ProductDetail' 
-//                 component={ProductDetail}
-//                 options={{
-//                     headerShown: false,
-//                 }}
-//             />
-//         </Stack.Navigator>
-//     );
-// }
-
-// export default function HomeNavigator() {
-//     return <MyStack />;
-// }
 
 import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';

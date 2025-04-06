@@ -5,7 +5,6 @@ import OrderHistory from '../Screens/User/OrderHistory';
 import OrderDetails from '../Screens/User/OrderDetails';
 import EditProfile from '../Screens/User/EditProfile';
 import Settings from '../Screens/User/Settings';
-import Login from '../Screens/User/Login';
 
 const Stack = createStackNavigator();
 
@@ -48,11 +47,7 @@ const UserNavigator = () => {
         component={Settings} 
         options={{ title: "Settings" }} 
       />
-      {/* <Stack.Screen 
-        name="Login" 
-        component={Login} 
-        options={{ title: "Login" }}
-      /> */}
+   
     </Stack.Navigator>
   );
 };
