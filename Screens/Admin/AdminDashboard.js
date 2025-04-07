@@ -247,7 +247,7 @@ const AdminDashboard = ({ navigation }) => {
           <TouchableOpacity 
             style={styles.actionButton}
             // onPress={() => alert('Feature under development')}
-            onPress={() => navigation.navigate('Promotion')}
+            onPress={() => navigation.navigate('Promotions')}
           >
             <Icon name="pricetag-outline" size={24} color="#584e51" />
             <Text style={styles.actionText}>Add Promotion</Text>

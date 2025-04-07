@@ -10,8 +10,9 @@ import OrderManagement from '../Screens/Admin/OrderManagement';
 import AdminSettings from '../Screens/Admin/AdminSettings';
 // import OrderDetails from '../Screens/Admin/OrderDetails';
 // import UserManagement from '../Screens/Admin/UserManagement';
-import Promotion from '../Screens/Admin/Promotion';
+import Promotions from '../Screens/Admin/Promotions';
 import OrderHistory from '../Screens/User/OrderHistory';
+import PromotionForm from '../Screens/Admin/PromotionForm';
 
 const Stack = createStackNavigator();
 
@@ -78,14 +79,21 @@ const AdminNavigator = () => {
         options={{ title: "Users" }} 
       /> */}
       <Stack.Screen 
-        name="Promotion" 
-        component={Promotion} 
+        name="Promotions" 
+        component={Promotions} 
         options={{ title: "Promotions" }}
       />
       <Stack.Screen 
         name="OrderHistory" 
         component={OrderHistory} 
         options={{ title: "Order History" }}
+      />
+      <Stack.Screen 
+        name="PromotionForm" 
+        component={PromotionForm} 
+        options={({ route }) => ({ 
+          title: route.params?.promotion ? "Edit Promotion" : "Add Promotion"
+        })}
       />
     </Stack.Navigator>
   );

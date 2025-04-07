@@ -370,7 +370,7 @@ const OrderHistory = () => {
         <View style={styles.actionContainer}>
           <TouchableOpacity
             style={styles.actionButton}
-            onPress={() => navigation.navigate('OrderDetails', { order: item })} // Navigate to OrderDetails
+            onPress={() => navigation.navigate('OrderDetails', { order: item })} 
           >
             <Text style={styles.actionText}>View Details</Text>
           </TouchableOpacity>

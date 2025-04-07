@@ -327,8 +327,10 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch } from 'react-redux';
-import { createReview } from '../../Redux/Actions/reviewAction'; // Import the Redux action
-import { getToken } from '../../utils/sqliteToken'; // Import getToken from sqliteToken.js
+import { createReview } from '../../Redux/Actions/reviewAction'; 
+import { getToken } from '../../utils/sqliteToken'; 
+import axios from 'axios';
+import baseURL from '../../assets/common/baseUrl';
 
 // Custom Star Rating Component
 const StarRating = ({ count = 5, defaultRating = 5, size = 30, onFinishRating }) => {
@@ -357,13 +359,14 @@ const StarRating = ({ count = 5, defaultRating = 5, size = 30, onFinishRating })
 };
 
 const OrderDetails = ({ route }) => {
-  const { order } = route.params; // Get the order data from navigation params
+  const { order } = route.params; 
   const [reviewModalVisible, setReviewModalVisible] = useState(false);
   const [currentProduct, setCurrentProduct] = useState(null);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
-  const [token, setToken] = useState(null); // State to store the token
+  const [token, setToken] = useState(null); 
   const dispatch = useDispatch();
+  const [discounts, setDiscounts] = useState({});
 
   if (!order || !order.orderNumber) {
     return (
@@ -375,19 +378,39 @@ const OrderDetails = ({ route }) => {
 
   const isDelivered = order.status.toLowerCase() === 'delivered';
 
-  // Fetch token from SQLite
   useEffect(() => {
     const fetchToken = async () => {
       try {
         const storedToken = await getToken();
-        console.log('Retrieved Token from SQLite:', storedToken?.token); // Debugging
-        setToken(storedToken?.token); // Set the token in state
+        console.log('Retrieved Token from SQLite:', storedToken?.token); 
+        setToken(storedToken?.token); 
       } catch (error) {
         console.error('Error retrieving token from SQLite:', error);
       }
     };
 
     fetchToken();
+  }, []);
+
+  useEffect(() => {
+    const fetchPromotions = async () => {
+      try {
+        const res = await axios.get(`${baseURL}/promotions`);
+        if (res.data.success) {
+          const discountsMap = {};
+          res.data.promotions.forEach((promo) => {
+            if (new Date(promo.endDate) > new Date()) {
+              discountsMap[promo.product._id] = promo.discountPercentage;
+            }
+          });
+          setDiscounts(discountsMap); 
+        }
+      } catch (error) {
+        console.error('Error fetching promotions:', error);
+      }
+    };
+
+    fetchPromotions();
   }, []);
 
   const handleReviewSubmit = () => {
@@ -397,14 +420,12 @@ const OrderDetails = ({ route }) => {
     }
 
     if (currentProduct) {
-      const productId = currentProduct.productId._id; // Assuming productId is in the item
+      const productId = currentProduct.productId._id; 
       const reviewData = { rating, comment };
 
-      // Dispatch the createReview action
       dispatch(createReview(productId, reviewData, token))
         .then(() => {
           Alert.alert('Success', 'Your review has been submitted.');
-          // Reset modal state
           setReviewModalVisible(false);
           setComment('');
           setRating(5);
@@ -414,7 +435,6 @@ const OrderDetails = ({ route }) => {
           Alert.alert('Error', 'An error occurred while submitting your review.');
         });
 
-      // Dismiss the keyboard
       Keyboard.dismiss();
     }
   };
@@ -425,26 +445,36 @@ const OrderDetails = ({ route }) => {
   };
 
   const renderCartItem = ({ item }) => {
+    const discount = item.productId?.discountPercentage || null; // Assuming discountPercentage is available
+    const formattedPrice = new Intl.NumberFormat('en-US').format(item.productId?.sell_price);
+    const discountedPrice = discount
+      ? (item.productId?.sell_price - (item.productId?.sell_price * discount) / 100).toFixed(2)
+      : null;
+    const formattedDiscountedPrice = discountedPrice
+      ? new Intl.NumberFormat('en-US').format(discountedPrice)
+      : null;
     return (
       <View style={styles.cartItem}>
-        <View style={styles.productRow}>
-          <Image 
-            source={{ uri: item.productId?.images && item.productId.images[0]?.url || 'https://via.placeholder.com/80' }} 
-            style={styles.productImage} 
-          />
-          <View style={styles.productInfo}>
-            <Text style={styles.productName}>{item.productId?.name || 'Unknown Product'}</Text>
-            <Text style={styles.productDetails}>
-              Category: {item.productId?.category || 'N/A'}
-            </Text>
-            <Text style={styles.productDetails}>
-              ₱{item.productId?.sell_price} x {item.quantity}
-            </Text>
-            <Text style={styles.productSubtotal}>
-              Subtotal: ₱{(item.productId?.sell_price * item.quantity).toFixed(2)}
-            </Text>
-          </View>
+      <View style={styles.productRow}>
+        <Image
+          source={{ uri: item.productId?.images && item.productId.images[0]?.url || 'https://via.placeholder.com/80' }}
+          style={styles.productImage}
+        />
+        <View style={styles.productInfo}>
+          <Text style={styles.productName}>{item.productId?.name || 'Unknown Product'}</Text>
+          <Text style={styles.productDetails}>
+            Category: {item.productId?.category || 'N/A'}
+          </Text>
+          <Text style={styles.productDetails}>
+            {discountedPrice
+              ? `₱${formattedDiscountedPrice} (Discounted)`
+              : `₱${formattedPrice}`} x {item.quantity}
+          </Text>
+          <Text style={styles.productSubtotal}>
+            Subtotal: ₱{(discountedPrice ? discountedPrice * item.quantity : item.productId?.sell_price * item.quantity).toFixed(2)}
+          </Text>
         </View>
+      </View>
         
         {isDelivered && (
           <TouchableOpacity 

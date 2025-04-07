@@ -1,4 +1,76 @@
 
+// import React, { useState, useRef, useEffect } from 'react';
+// import {
+//   View,
+//   Text,
+//   StyleSheet,
+//   ScrollView,
+//   Image,
+//   TouchableOpacity,
+//   Dimensions,
+//   SafeAreaView,
+//   StatusBar,
+//   FlatList,
+//   Animated,
+//   Alert,
+//   ActivityIndicator,
+//   Modal,
+//   TextInput,
+//   TouchableWithoutFeedback,
+//   Keyboard,
+//   KeyboardAvoidingView,
+//   Platform,
+  
+// } from 'react-native';
+// import Icon from 'react-native-vector-icons/Ionicons';
+// import { useNavigation } from '@react-navigation/native';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { addToCart } from '../../Redux/Actions/cartAction';
+// import { listReviewsByProduct, updateReview,deleteReview  } from '../../Redux/Actions/reviewAction';
+// import { useAuth } from '../../Context/Auth';
+// import { getToken } from '../../utils/sqliteToken';
+
+
+// const { width, height } = Dimensions.get('window');
+
+// const ProductDetail = ({ route }) => {
+//   const { item } = route.params;
+//   const navigation = useNavigation();
+//   const dispatch = useDispatch();
+//   const { user } = useAuth();
+//   const [isFavorite, setIsFavorite] = useState(false);
+//   const [quantity, setQuantity] = useState(1);
+//   const scrollX = useRef(new Animated.Value(0)).current;
+//   const imageSliderRef = useRef(null);
+
+//   const [isModalVisible, setIsModalVisible] = useState(false);
+//   const [selectedReview, setSelectedReview] = useState(null);
+//   const [updatedComment, setUpdatedComment] = useState('');
+//   const [updatedRating, setUpdatedRating] = useState(0);
+//   const [token, setToken] = useState(null);
+
+//   const { reviews, loading } = useSelector((state) => ({
+//     reviews: state.reviews.reviews, 
+//     loading: state.reviews.loading, 
+//   }));
+
+//   const formattedPrice = new Intl.NumberFormat('en-US').format(item.sell_price);
+
+//   useEffect(() => {
+//     const fetchToken = async () => {
+//       try {
+//         const storedToken = await getToken();
+//         setToken(storedToken?.token); 
+//       } catch (error) {
+//         console.error('Error retrieving token from SQLite:', error);
+//       }
+//     };
+
+//     fetchToken();
+
+//     dispatch(listReviewsByProduct(item._id));
+//   }, [dispatch, item._id]);
+
 import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
@@ -18,18 +90,16 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../../Redux/Actions/cartAction';
-import { listReviewsByProduct, updateReview,deleteReview  } from '../../Redux/Actions/reviewAction';
+import { listReviewsByProduct, updateReview, deleteReview } from '../../Redux/Actions/reviewAction';
 import { useAuth } from '../../Context/Auth';
 import { getToken } from '../../utils/sqliteToken';
-
+import axios from 'axios';
+import baseURL from '../../assets/common/baseUrl';
 
 const { width, height } = Dimensions.get('window');
 
@@ -48,30 +118,52 @@ const ProductDetail = ({ route }) => {
   const [updatedComment, setUpdatedComment] = useState('');
   const [updatedRating, setUpdatedRating] = useState(0);
   const [token, setToken] = useState(null);
+  const [discount, setDiscount] = useState(null); // State for discount
 
   const { reviews, loading } = useSelector((state) => ({
-    reviews: state.reviews.reviews, 
-    loading: state.reviews.loading, 
+    reviews: state.reviews.reviews,
+    loading: state.reviews.loading,
   }));
-
-  const formattedPrice = new Intl.NumberFormat('en-US').format(item.sell_price);
 
   useEffect(() => {
     const fetchToken = async () => {
       try {
         const storedToken = await getToken();
-        setToken(storedToken?.token); 
+        setToken(storedToken?.token);
       } catch (error) {
         console.error('Error retrieving token from SQLite:', error);
       }
     };
 
-    fetchToken();
+    const fetchPromotions = async () => {
+      try {
+        const res = await axios.get(`${baseURL}/promotions`);
+        if (res.data.success) {
+          const activePromotion = res.data.promotions.find(
+            (promo) => promo.product._id === item._id && new Date(promo.endDate) > new Date()
+          );
 
+          if (activePromotion) {
+            setDiscount(activePromotion.discountPercentage);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching promotions:', error);
+      }
+    };
+
+    fetchToken();
+    fetchPromotions();
     dispatch(listReviewsByProduct(item._id));
   }, [dispatch, item._id]);
 
-
+  const formattedPrice = new Intl.NumberFormat('en-US').format(item.sell_price);
+  const discountedPrice = discount
+    ? (item.sell_price - (item.sell_price * discount) / 100).toFixed(2)
+    : null;
+  const formattedDiscountedPrice = discountedPrice
+    ? new Intl.NumberFormat('en-US').format(discountedPrice)
+    : null;
   const handleIncrease = () => {
     if (quantity < item.stock_quantity) {
       setQuantity(quantity + 1);
@@ -98,7 +190,8 @@ const ProductDetail = ({ route }) => {
       userId: user.id,
       id: item._id,
       name: item.name,
-      price: item.sell_price,
+      // price: item.sell_price,
+      price: discountedPrice ? parseFloat(discountedPrice) : item.sell_price,
       image: item.images[0]?.url,
       category: item.category,
       quantity,
@@ -316,7 +409,9 @@ const ProductDetail = ({ route }) => {
           </View>
 
           <Text style={styles.productTitle}>{item.name}</Text>
-          <Text style={styles.priceText}>₱{formattedPrice}</Text>
+          <Text style={styles.priceText}>
+          {discountedPrice ? `₱${formattedDiscountedPrice}` : `₱${formattedPrice}`}
+          </Text>
 
           <View style={styles.divider} />
 
